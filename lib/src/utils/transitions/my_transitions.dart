@@ -1,0 +1,33 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart' as cupertino;
+
+class MyPageTransitions {
+  static void slideTransition(
+    BuildContext context,
+    Widget page,
+  ) {
+    if (Theme.of(context).platform == TargetPlatform.android) {
+      Navigator.of(context).push(
+        PageRouteBuilder(
+          transitionDuration: const Duration(milliseconds: 500),
+          pageBuilder: (context, animation, secondaryAnimation) => page,
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            var begin = const Offset(1.0, 0.0);
+            var end = Offset.zero;
+            var curve = Curves.easeInOut;
+            var tween =
+                Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+            var offsetAnimation = animation.drive(tween);
+            return SlideTransition(position: offsetAnimation, child: child);
+          },
+        ),
+      );
+    } else if (Theme.of(context).platform == TargetPlatform.iOS) {
+      cupertino.Navigator.of(context).push(
+        cupertino.CupertinoPageRoute(
+          builder: (context) => page,
+        ),
+      );
+    }
+  }
+}
